@@ -20,14 +20,15 @@ class LoginWidget {
       required TextEditingController passController,
       required void Function()? onPressed,
       required GlobalKey key}) {
+    final size = MediaQuery.of(context).size;
     return SingleChildScrollView(
         child: Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: EdgeInsets.only(top: size.height *0.01),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: size.height *0.05),
+            margin: EdgeInsets.symmetric(horizontal: 10, vertical: size.height *0.01),
             decoration: BoxDecoration(
                 color: AppColor.whiteColor,
                 borderRadius: BorderRadius.circular(15)),
@@ -122,14 +123,15 @@ class LoginWidget {
                                   provider.toggleObscureText();
                                 },
                                 icon: Icon(
-                                 provider.obscureText ? Icons.remove_red_eye_outlined : Icons.visibility_off,
+                                  provider.obscureText
+                                      ? Icons.remove_red_eye_outlined
+                                      : Icons.visibility_off,
                                   size: 24,
                                   color: AppColor.semiBlackColor,
                                 )),
                             prefixIcon: Icon(
                               Icons.lock_outline,
                               color: AppColor.semiBlackColor,
-
                               size: 24,
                             ),
                             disabledBorder: OutlineInputBorder(
@@ -163,10 +165,9 @@ class LoginWidget {
                       Text(
                         'Forget Password?',
                         style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: AppColor.semiBlackColor
-                        ),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.semiBlackColor),
                       )
                     ],
                   ),
@@ -175,12 +176,19 @@ class LoginWidget {
                   ),
                   CommonWidget.commonButton(context,
                       onPressed: onPressed,
-                      child: Center(
-                        child: Text(
-                          'Log In',
-                          style: TextStyle(
-                              color: AppColor.whiteColor, fontSize: 16),
-                        ),
+                      child: Consumer<LoginProvider>(
+                        builder: (context, provider, child) => provider.loading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                color: AppColor.whiteColor,
+                              ))
+                            : Center(
+                                child: Text(
+                                  'Log In',
+                                  style: TextStyle(
+                                      color: AppColor.whiteColor, fontSize: 16),
+                                ),
+                              ),
                       ))
                 ],
               ),
@@ -192,9 +200,8 @@ class LoginWidget {
               Text(
                 'Do not have any account? ',
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: AppColor.semiBlackColor
-                ),
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.semiBlackColor),
               ),
               const Text(
                 'Sign up',

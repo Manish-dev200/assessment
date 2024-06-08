@@ -1,29 +1,36 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:assessment/auth/presentation/page/login_page.dart';
 import 'package:assessment/auth/presentation/provider/login_provider.dart';
 import 'package:assessment/dashboard/business/use%20case/api.dart';
-import 'package:assessment/dashboard/presentation/page/dashboard_page.dart'; // Import your dashboard page
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:assessment/dashboard/presentation/page/dashboard_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(apiKey: "AIzaSyDq1dTr2fyv8k798CiRNN73l6RqS6NxRYk", appId: '1:276507141994:android:0b5957e5b450f39669a713', messagingSenderId: '276507141994', projectId: 'assessment-928a5')
+  );
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  Future<Widget> _getInitialPage() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    String? token = sp.getString('randomNumber');
-    if (token == null) {
-      return LoginPage();
-    } else {
-      return DashBoardPage(); // Navigate to your dashboard page if the token is not null
-    }
-  }
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
+class _MyAppState extends State<MyApp> {
+
+  User? user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = FirebaseAuth.instance.currentUser;
+  }
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -31,26 +38,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => LoginProvider()),
         ChangeNotifierProvider(create: (context) => ApiProvider())
       ],
-      child: FutureBuilder<Widget>(
-        future: _getInitialPage(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const MaterialApp(
-              debugShowCheckedModeBanner: false,
-              home: Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
-          } else {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              home: snapshot.data,
-            );
-          }
-        },
-      ),
+      child: MaterialApp(
+        home: user != null ? const DashBoardPage() : const LoginPage(),
+      )
     );
   }
 }

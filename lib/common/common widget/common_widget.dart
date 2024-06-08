@@ -33,10 +33,11 @@ class CommonWidget {
 
   static Widget commonButton(BuildContext context,
       {void Function()? onPressed, required Widget child}) {
+    final size = MediaQuery.of(context).size;
     return InkWell(
       onTap: onPressed,
       child: Container(
-        height: 50,
+        height: size.height*0.07,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: AppColor.buttonColor,
